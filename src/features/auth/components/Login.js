@@ -1,19 +1,12 @@
-import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import {
-  
-  increment,
-  
-  incrementAsync,
-  
-  selectCount,
-} from '../authSlice';
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { increment, incrementAsync, selectCount } from "../authSlice";
+import { Link } from "react-router-dom";
 
 export default function Login() {
   const count = useSelector(selectCount);
   const dispatch = useDispatch();
- 
+
   return (
     <div>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
