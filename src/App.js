@@ -15,28 +15,21 @@ import {
 import CartPage from "./pages/CartPage";
 import Checkout from "./pages/Checkout";
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Home />,
-  },
-  {
-    path: "/login",
-    element: <LoginPage />,
-  },
-  {
-    path: "/signup",
-    element: <SignupPage />,
-  },
+import ProductDetailPage from "./pages/productDetailsPage";
 
-  {
-    path: "/cart",
-    element: <CartPage />,
-  },
-  {
-    path: "/checkout",
-    element: <Checkout />,
-  },
+const router = createBrowserRouter([
+  { path: "/", element: <Home /> },
+
+  { path: "/login", element: <LoginPage /> },
+
+  { path: "/signup", element: <SignupPage /> },
+
+  { path: "/cart", element: <CartPage /> },
+
+  { path: "/checkout", element: <Checkout /> },
+  { path: "/product-details", element: <ProductDetailPage /> },
+
+  
 ]);
 
 function App() {

@@ -1,8 +1,7 @@
-import NavBar from "../features/navbar/Navbar"
-import ProductList from "../features/product-list/productList"
+import NavBar from "../features/navbar/Navbar";
+import ProductList from "../features/product-list/components/productList";
 
-
- function Home()  {
+function Home() {
   return (
     <div>
       <NavBar>
@@ -12,4 +11,4 @@ import ProductList from "../features/product-list/productList"
   );
 }
 
-export default Home
+export default Home;
