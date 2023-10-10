@@ -16,20 +16,31 @@ import CartPage from "./pages/CartPage";
 import Checkout from "./pages/Checkout";
 
 import ProductDetailPage from "./pages/productDetailsPage";
+import Protected from "./features/auth/components/Protected";
 
 const router = createBrowserRouter([
-  { path: "/", element: <Home /> },
-
-  { path: "/login", element: <LoginPage /> },
-
-  { path: "/signup", element: <SignupPage /> },
-
-  { path: "/cart", element: <CartPage /> },
-
-  { path: "/checkout", element: <Checkout /> },
-  { path: "/product-details/:id", element: <ProductDetailPage /> },
-
   
+  { path: "/login", element: <LoginPage /> },
+  
+  { path: "/signup", element: <SignupPage /> },
+  
+  {
+    path: "/",
+    element: (<Protected>  <Home /></Protected>),
+  },
+  {
+    path: "/cart",
+    element: (<Protected><CartPage /></Protected> ),
+  },
+
+  {
+    path: "/checkout",
+    element: ( <Protected> <Checkout /> </Protected>),
+  },
+  {
+    path: "/product-details/:id",
+    element: (<Protected><ProductDetailPage /></Protected>),
+  },
 ]);
 
 function App() {
