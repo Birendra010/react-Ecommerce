@@ -1,7 +1,8 @@
 import React, { useState, Fragment } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import {
-  selectItems,
+  deleteItemFromCartAsync,
+  selectItems, updateItemAsync,
 } from './cartSlice';
 
 import { Link } from "react-router-dom";
@@ -16,7 +17,15 @@ export default function Cart() {
   const items = useSelector(selectItems);
 
 const totalAmount = items.reduce((amount , item)=>item.price*item.quantity +amount ,0)
-const totalItems = items.reduce( (total, item) => item.quantity +total,0);
+  const totalItems = items.reduce((total, item) => item.quantity + total, 0);
+  //handle update item  quantity in cart 
+  const handleQuantity = (e,item) => {
+  dispatch(updateItemAsync({...item , quantity:+e.target.value}))
+}
+//handle remove from cart
+  const handleRemove = (e , id) => {
+  dispatch(deleteItemFromCartAsync(id))
+}
  
   return (
     <div className="mx-auto mt-0 bg-white max-w-7xl  px-4 sm:px-4 lg:px-24">
@@ -26,13 +35,16 @@ const totalItems = items.reduce( (total, item) => item.quantity +total,0);
         </h1>
 
         <div className="flow-root">
-          <ul role="list" className="-my-6 divide-y divide-gray-200">
-            {items.map((product) => (
-              <li key={product.id} className="flex py-6">
+          <ul role="list" className=" divide-y divide-gray-200 flex-col gap-10">
+            {items.map((item) => (
+              <li
+                key={item.id}
+                className="flex  shadow-sm shadow-gray-500 p-2 "
+              >
                 <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                   <img
-                    src={product.thumbnail}
-                    alt={product.title}
+                    src={item.thumbnail}
+                    alt={item.title}
                     className="h-full w-full object-cover object-center"
                   />
                 </div>
@@ -41,13 +53,13 @@ const totalItems = items.reduce( (total, item) => item.quantity +total,0);
                   <div>
                     <div className="flex justify-between text-base font-medium text-gray-900">
                       <h3>
-                        <a href={product.href}>{product.title}</a>
+                        <a href={item.href}>{item.title}</a>
                       </h3>
-                      <p className="ml-4">${product.price}</p>
+                      <p className="ml-4">
+                        $ {item.price} * {item.quantity}
+                      </p>
                     </div>
-                    <p className="mt-1 text-sm text-gray-500">
-                      {product.brand}
-                    </p>
+                    <p className="mt-1 text-sm text-gray-500">{item.brand}</p>
                   </div>
                   <div className="flex flex-1 items-end justify-between text-sm">
                     <div className="text-gray-500">
@@ -58,15 +70,22 @@ const totalItems = items.reduce( (total, item) => item.quantity +total,0);
                         Qty
                       </label>
 
-                      <select style={{ padding:" 0 30px 0 6px "}}>
+                      <select
+                        style={{ padding: " 0 30px 0 6px " }}
+                        onChange={(e) => handleQuantity(e, item)}
+                        value={item.quantity}
+                      >
                         <option value="1">1</option>
                         <option value="2">2</option>
                         <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
                       </select>
                     </div>
 
                     <div className="flex">
                       <button
+                        onClick={(e) => handleRemove(e, item.id)}
                         type="button"
                         className="font-medium text-indigo-600 hover:text-indigo-500"
                       >
@@ -82,12 +101,12 @@ const totalItems = items.reduce( (total, item) => item.quantity +total,0);
       </div>
 
       <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
-        <div className="flex justify-between my-2 text-base font-medium text-gray-900">
+        <div className="flex justify-between my-1 text-base font-medium text-gray-900">
           <p>Subtotal</p>
-          <p>${totalAmount}</p>
+          <p>$ {totalAmount}</p>
         </div>
 
-        <div className="flex justify-between my-2 text-base font-medium text-gray-900">
+        <div className="flex justify-between my-1 text-base font-medium text-gray-900">
           <p>Total Items in Cart</p>
           <p>{totalItems} items</p>
         </div>
