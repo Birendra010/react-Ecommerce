@@ -37,15 +37,25 @@ export const deleteItemFromCartAsync = createAsyncThunk(
     return response.data;
   }
 );
+//reset cart after succes-order
+export const resetCartAsync = createAsyncThunk(
+  "cart/resetCart", async (userId) => {
+  const response = await deleteItemFromCart(userId);
+  return response.data;
+});
 
-export const cartSlice = createSlice({
+
+
+
+export const orderSlice = createSlice({
   name: 'cart',
   initialState,
   
   reducers: {
-    increment: (state) => {
-
-      state.value += 1;
+    //reset current order
+    resetOrder: (state) => {
+      state.currentOrder = null;
+      
     },
 
    
@@ -84,18 +94,28 @@ export const cartSlice = createSlice({
       })
       .addCase(deleteItemFromCartAsync.fulfilled, (state, action) => {
         state.status = "idle";
-        const index = state.items.findIndex((item) => item.id === action.payload.id);
+        const index = state.items.findIndex(
+          (item) => item.id === action.payload.id
+        );
         // remove item
         state.items.splice(index, 1);
+      })
+      .addCase(resetCartAsync.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(resetCartAsync.fulfilled, (state, action) => {
+        state.status = "idle";
+        state.items =[]
+        
       });
   },
 });
-
-export const { increment } = cartSlice.actions;
+//for reset currentOrder
+export const { resetOrder } = orderSlice.actions;
 
 
 export const selectItems = (state) => state.cart.items;
 
 
 
-export default cartSlice.reducer;
+export default orderSlice.reducer;

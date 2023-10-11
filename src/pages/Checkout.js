@@ -1,56 +1,70 @@
-import React, { useState, Fragment } from "react";
+import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link, Navigate } from "react-router-dom";
-import { deleteItemFromCartAsync, selectItems, updateItemAsync,} from "../features/cart/cartSlice";
+import {
+  deleteItemFromCartAsync,
+  selectItems,
+  updateItemAsync,
+} from "../features/cart/cartSlice";
 
-import { Dialog, Transition } from "@headlessui/react";
-import { XMarkIcon } from "@heroicons/react/24/outline";
+
 import { useForm } from "react-hook-form";
-import { selectLoggedInUser, updateUserAsync } from "../features/auth/authSlice";
-import { createOrderAsync } from "../features/order/orderSlice";
+import {
+  selectLoggedInUser,
+  updateUserAsync,
+} from "../features/auth/authSlice";
+import { createOrderAsync, selectCurrentOrder } from "../features/order/orderSlice";
 
 function Checkout() {
   const [open, setOpen] = useState(true);
-    const [seletedAddress, setSelectedAdress] = useState(null);
-    const [paymentMethod, setPaymentMethod] = useState("cash");
-  //  const count = useSelector(selectCount);
+  const [seletedAddress, setSelectedAdress] = useState(null);
+  const [paymentMethod, setPaymentMethod] = useState("cash");
   const dispatch = useDispatch();
-      const {  register,  handleSubmit, reset, watch, formState: { errors }} = useForm();
-     const user = useSelector(selectLoggedInUser)
-
-    const items = useSelector(selectItems);
-
-    const totalAmount = items.reduce((amount, item) => item.price * item.quantity + amount,0);
-    const totalItems = items.reduce((total, item) => item.quantity + total, 0);
-    //handle update item  quantity in cart
-    const handleQuantity = (e, item) => {
-      dispatch(updateItemAsync({ ...item, quantity: +e.target.value }));
-    };
-    //handle remove from cart
-    const handleRemove = (e, id) => {
-      dispatch(deleteItemFromCartAsync(id));
-    };
-  //handle address for select 
+  const {
+  register,
+  handleSubmit,
+  reset,
+  watch,
+  formState: { errors },
+  } = useForm();
+  console.log(errors)
+  const user = useSelector(selectLoggedInUser);
+  const items = useSelector(selectItems);
+  const currentOrder = useSelector(selectCurrentOrder)
+  const totalAmount = items.reduce( (amount, item) => item.price * item.quantity + amount, 0 );
+  const totalItems = items.reduce((total, item) => item.quantity + total, 0);
+  //handle update item  quantity in cart
+  const handleQuantity = (e, item) => {
+    dispatch(updateItemAsync({ ...item, quantity: +e.target.value }));
+  };
+  //handle remove from cart
+  const handleRemove = (e, id) => {
+    dispatch(deleteItemFromCartAsync(id));
+  };
+  //handle address for select
   const handleAddress = (e) => {
-    console.log(e.target.value)
-    setSelectedAdress(user.addresses[e.target.value])
-  }
-  
-  // handle select payment method 
-  const handlePayment = (e) => {
-    setPaymentMethod(e.target.value)
-  }
+    console.log(e.target.value);
+    setSelectedAdress(user.addresses[e.target.value]);
+  };
 
-  // handle order 
+  // handle select payment method
+  const handlePayment = (e) => {
+    setPaymentMethod(e.target.value);
+  };
+
+  // handle order
   const handleOrder = (e) => {
-    const order = { items, totalAmount, totalItems, user, paymentMethod, seletedAddress }
-    dispatch(createOrderAsync(order))
-  }
+    // other status can be delivered ,received;
+    const order = { items, totalAmount, totalItems, user, paymentMethod, seletedAddress, status: "pending", } 
+    dispatch(createOrderAsync(order));
+  };
 
   return (
     <>
       {/* when  empty cart to redirect home page  */}
       {!items.length && <Navigate to="/" replace={true}></Navigate>}
+      {/* when order palced to navigate order-success page with orderId send orrder id in params */}
+      {currentOrder && <Navigate to={`/order-success/${currentOrder.id}`} replace={true}></Navigate>}
       <div className="  bg-white max-w-7xl  px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-5">
           <div className="lg:col-span-3">
@@ -95,25 +109,6 @@ function Checkout() {
                         />
                       </div>
                     </div>
-
-                    {/* <div className="sm:col-span-3">
-                      <label
-                        htmlFor="last-name"
-                        className="block text-sm font-medium leading-6 text-gray-900"
-                      >
-                        Last name
-                      </label>
-                      <div className="mt-2">
-                        <input
-                          type="text"
-                          name="last-name"
-                          id="last-name"
-                          autoComplete="family-name"
-                          className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                        />
-                      </div>
-                    </div> */}
-
                     <div className="sm:col-span-4">
                       <label
                         htmlFor="email"
@@ -270,9 +265,7 @@ function Checkout() {
                             <p className="text-sm font-semibold leading-6 text-gray-900">
                               {address.name}
                             </p>
-                            {/* <p className="mt-1 truncate text-xs leading-5 text-gray-500">
-                          {address.email}
-                        </p> */}
+                        
                             <p className="mt-1 truncate text-xs leading-5 text-gray-500">
                               City : {address.city}
                             </p>
@@ -451,9 +444,9 @@ function Checkout() {
                   </p>
                   <div className="mt-6">
                     <div
-                    onClick={handleOrder}
-                    
-                      className="flex items-center cursor-pointer justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700">
+                      onClick={handleOrder}
+                      className="flex items-center cursor-pointer justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
+                    >
                       Order Now
                     </div>
                   </div>
