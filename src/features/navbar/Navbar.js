@@ -18,7 +18,7 @@ const navigation = [
 ]
 const userNavigation = [
   { name: 'Your Profile', link: '/profile' },
-  { name: 'Settings', link: '#' },
+  { name: 'My Orders', link: '/orders' },
   { name: 'Sign out', link: '/login' },
 ]
 
@@ -117,7 +117,7 @@ function NavBar({ children }) {
                                 <Menu.Item key={item.name}>
                                   {({ active }) => (
                                     <Link
-                                      to={item.href}
+                                      to={item.link}
                                       className={classNames(
                                         active ? "bg-gray-100" : "",
                                         "block px-4 py-2 text-sm text-gray-700"

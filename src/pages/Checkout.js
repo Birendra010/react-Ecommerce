@@ -54,9 +54,17 @@ function Checkout() {
 
   // handle order
   const handleOrder = (e) => {
-    // other status can be delivered ,received;
-    const order = { items, totalAmount, totalItems, user, paymentMethod, seletedAddress, status: "pending", } 
-    dispatch(createOrderAsync(order));
+
+    if (seletedAddress && paymentMethod) {
+      // other status can be delivered ,received;
+      const order = {  items,  totalAmount,  totalItems,  user,  paymentMethod,  seletedAddress,  status: "pending",
+      };
+      dispatch(createOrderAsync(order));
+    } else {
+      alert('Enter address and payment method ')
+    }
+
+   
   };
 
   return (
@@ -75,7 +83,7 @@ function Checkout() {
                 dispatch(
                   updateUserAsync({
                     ...user,
-                    addresses: [...user.addresses, data],
+                    addresses:[...user.addresses, data],
                   })
                 );
                 reset();
